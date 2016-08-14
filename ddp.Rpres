@@ -1,0 +1,51 @@
+Devoping data products project
+========================================================
+author: Zhen Huang
+date: 2016/08/13
+autosize: true
+
+Introduction
+========================================================
+
+This application shows the time series data for AAPL stock price. To try this app out see: <https://huangzhen.shinyapps.io/ddp_AAPL/>.
+
+- There are three inputs: start/end date, and whether MACD should be shown
+- Operations mainly include selecting dates from yahoo dataset and decide whether MACD should be shown
+- Output is the plot shown in main panel
+- Documentation is included at the bottom of the app
+
+Source of the data
+========================================================
+
+The data is extracted from yahoo finance using quantmod package:
+
+```{r}
+library(quantmod)
+getSymbols("AAPL")
+```
+
+Summary of the data
+========================================================
+
+A brief summary of the data is shown as follows:
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+Sys.setlocale("LC_ALL", "English")
+```
+
+```{r, echo=FALSE}
+summary(AAPL)
+```
+
+Plotting the data
+========================================================
+
+Finally is our plot, you can specify start date and end date in our app, but here is just an example:
+
+Github repo can be seen here: <https://github.com/huangzhenbc/developing-data-products>
+***
+```{r, echo=FALSE}
+AAPL_price = AAPL[index(AAPL) <= "2016-08-13" & index(AAPL) >= "2016-05-01"]
+candleChart(AAPL_price)
+```
+
