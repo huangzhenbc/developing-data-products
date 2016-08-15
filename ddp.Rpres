@@ -7,45 +7,52 @@ autosize: true
 Introduction
 ========================================================
 
-This application shows the time series data for AAPL stock price. To try this app out see: <https://huangzhen.shinyapps.io/ddp_AAPL/>.
+This application shows the time series data for AAPL stock price, and utilizes a simple model to predict the AAPL price on next day. To try this app out see: <https://huangzhen.shinyapps.io/ddp_AAPL/>.
 
 - There are three inputs: start/end date, and whether MACD should be shown
-- Operations mainly include selecting dates from yahoo dataset and decide whether MACD should be shown
-- Output is the plot shown in main panel
-- Documentation is included at the bottom of the app
+- Operations mainly include selecting the data from "Start:" to "End:", and predicting AAPL price on next business day using data till "End:" date user specified.
+- Outputs are the candel chart from "Start:" to "End:", and the predicted price along with the actual price on next business day for comparison.
+- Documentation and user guide are at the bottom of the app
 
-Source of the data
+The Data
 ========================================================
 
-The data is extracted from yahoo finance using quantmod package:
-
-```{r}
-library(quantmod)
-getSymbols("AAPL")
-```
-
-Summary of the data
-========================================================
-
-A brief summary of the data is shown as follows:
+The data is extracted from yahoo finance using quantmod package. A brief summary of the AAPL close price is shown as follows:
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
+library(quantmod)
+getSymbols("AAPL")
 Sys.setlocale("LC_ALL", "English")
 ```
 
-```{r, echo=FALSE}
-summary(AAPL)
+```{r}
+summary(AAPL$AAPL.Close)
 ```
 
-Plotting the data
+The Plot
 ========================================================
 
-Finally is our plot, you can specify start date and end date in our app, but here is just an example:
+Our plot looks like this: (you can specify the start date and end date in our app, and here is just an example)
 
-Github repo can be seen here: <https://github.com/huangzhenbc/developing-data-products>
+Github repo containing codes and other docs can be seen here: <https://github.com/huangzhenbc/developing-data-products>
 ***
 ```{r, echo=FALSE}
 AAPL_price = AAPL[index(AAPL) <= "2016-08-13" & index(AAPL) >= "2016-05-01"]
 candleChart(AAPL_price)
 ```
 
+The Predition
+========================================================
+Our predition is based on autoregressive model, a simple model to predict time series data. The idea is to regress the data today on previous days and fit a linear model. The code for our prediction looks like follows:
+
+```{r, eval=FALSE}
+AAPL_price = AAPL[index(AAPL) <= input$eDate]
+if (nrow(AAPL_price) == 0) {
+    "No data available"
+} else {
+    predict(ar(AAPL_price$AAPL.Close))$pred
+}
+```
+
+For detailed implementation visit my github repo:
+<https://github.com/huangzhenbc/developing-data-products>
